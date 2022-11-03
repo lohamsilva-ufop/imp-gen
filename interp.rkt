@@ -100,10 +100,6 @@
                       (ewhile e1 blk1))
            env))]
 
-
-
-
-
 ;para a consolidação do FOR, temos duas etapas:
 ; 1 - atribuir o valor da variável (manda um env e a expressao e retorna um env)
 ; 2 - avaliar a expressao. se verdadeiro, executado o bloco e incrementa 1. Senao, retorna env.
