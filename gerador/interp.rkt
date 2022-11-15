@@ -15,7 +15,6 @@
 ;propriedade: uma lista S deve obrigatoriamente conter numeros pares n.
 (define-property teste
   ([numero    (gen:gera-lista-de-numeros)])
-  (write-file "entradas.txt" (~a numero))
    (displayln numero))
 
 (define (eval-for env x stop block)

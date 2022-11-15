@@ -2,6 +2,17 @@
 
 (require "syntax.rkt")
 
+(define (executa-arquivo path)
+  (load path))
+
+(define (percorre-path lista path)
+  (displayln (string-append path "/" (~a(first lista))))
+  (cond
+    [(empty? (rest lista)) (executa-arquivo (string-append path "/" (~a(first lista))))]
+    [else 
+      (executa-arquivo (string-append path "/" (~a(first lista))))
+      (percorre-path (rest lista) path)]))
+
 (define (eval-expr env e)
   (match e
     [(value val) (cons env (value val))]))
@@ -15,14 +26,10 @@
         (displayln "")]
 
     [(gabarito path)
-        (display "Localização do gabarito do professor: ")
-        (display (value-value path))
-        (displayln "")]
+        (executa-arquivo (value-value path))]
 
      [(exercicios-alunos path)
-        (display "Localização da pasta com os exercicios dos alunos: ")
-        (display (value-value path))
-        (displayln "")]))
+       (percorre-path (directory-list (value-value path)) (value-value path))]))
 
 
 (define (eval-stmts env blk)

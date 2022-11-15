@@ -1,10 +1,22 @@
 #lang racket
+(require rackcheck rackunit)
+(require 2htdp/batch-io)
+ (require racket/format)
+
+;INTERPETADOR QUE CONTÉM O GERADOR
 
 (require "syntax.rkt")
 
-(define (gerador  texto)
-    texto
- )
+;função que gera numeros naturais aleatoriamente.
+(define (gen:gera-lista-de-numeros)
+           (gen:bind gen:natural
+              (lambda (x) (gen:const x))))
+
+;propriedade: uma lista S deve obrigatoriamente conter numeros pares n.
+(define-property teste
+  ([numero    (gen:gera-lista-de-numeros)])
+  (write-file "entradas.txt" (~a numero))
+   (displayln numero))
 
 (define (eval-for env x stop block)
 (let* (
@@ -88,18 +100,14 @@
 ; eval-stmt : environment * statement -> environment
 
 
-(define (eval-stmt env s gerador)
+(define (eval-stmt env s)
   (match s
     [(input string)
-        (read-value env string gerador)]
+        (read-value env string)]
 
     [(assign v e) (eval-assign env (var-id v) e)]
 
-    [(input-null v) (begin
-                      (display "Recebi a atribuição da variavel input nula: ")
-                      (display (var-id v))
-                      (display "\n")
-                      (display "\n"))]
+    [(input-null v) (check-property teste)]
     
     [(eif e1 blk1 blk2)
      (let ([c (eval-expr env e1)])
@@ -149,13 +157,13 @@
          env))]))
 
 
-(define (eval-stmts env blk gerador)
+(define (eval-stmts env blk)
   (match blk
     ['() env]
-    [(cons s blks) (let ([nenv (eval-stmt env s gerador)])
-                       (eval-stmts nenv blks gerador))]))
+    [(cons s blks) (let ([nenv (eval-stmt env s)])
+                       (eval-stmts nenv blks))]))
 
-(define (imp-extendido-interp prog)
-  (eval-stmts (make-immutable-hash) prog gerador))
+(define (gen-interp prog)
+  (eval-stmts (make-immutable-hash) prog))
 
-(provide imp-extendido-interp eval-expr)
+(provide gen-interp eval-expr)
