@@ -6,7 +6,7 @@
 
 (define spcf-parser
   (parser
-   (start statements)
+   (start statement)
    (end EOF)
    (tokens value-tokens var-tokens syntax-tokens)
    (src-pos)
@@ -17,13 +17,18 @@
                 a b c d e) (void))))
   
    (grammar
-    (statements [() '()]
-                [(statement statements) (cons $1 $2)])
-  
-    (statement [(QTEXEC COLON expr SEMI) (numero-execucoes $3)]
-               [(GABARITO COLON expr SEMI) (gabarito $3)]
-               [(EXERCICIOS COLON expr SEMI) (exercicios-alunos $3)])
     
+
+    ; (statement
+     ;[(QTEXEC COLON expr SEMI
+      ; GABARITO COLON expr SEMI
+       ;EXERCICIOS COLON expr SEMI) (config $3 $7 $11)])
+  
+    (statement
+     [(QTEXEC COLON expr SEMI
+       GABARITO COLON expr SEMI
+       EXERCICIOS COLON expr SEMI) (config $3 $7 $11)])
+
     (expr  [(NUMBER) (value $1)]
            [(STRING) (value $1)]))))
 
@@ -31,4 +36,3 @@
   (spcf-parser (lambda () (next-token ip))))
 
 (provide parse)
-

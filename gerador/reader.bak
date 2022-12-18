@@ -7,6 +7,8 @@
 (provide (rename-out [imp-read read]
                      [imp-read-syntax read-syntax]))
 
+(provide #%module-begin #%top-interaction)
+
 (define (imp-read in)
   (syntax->datum
    (imp-read-syntax #f in)))
@@ -15,7 +17,8 @@
   (datum->syntax
    #f
    `(module imp-mod racket
-      ,(finish (imp-extendido-interp (parse port))))))
+      ,(finish (gen-interp (parse port))))))
+
 
 (define (finish env)
   (displayln "Finished!"))

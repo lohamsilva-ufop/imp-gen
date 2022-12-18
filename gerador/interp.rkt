@@ -1,6 +1,5 @@
 #lang racket
 (require rackcheck rackunit)
-(require 2htdp/batch-io)
  (require racket/format)
 
 ;INTERPETADOR QUE CONTÉM O GERADOR
@@ -9,12 +8,12 @@
 
 ;função que gera numeros naturais aleatoriamente.
 (define (gen:gera-lista-de-numeros)
-           (gen:bind gen:natural
+           (gen:bind gen:natural 
               (lambda (x) (gen:const x))))
 
 ;propriedade: uma lista S deve obrigatoriamente conter numeros pares n.
 (define-property teste
-  ([numero    (gen:gera-lista-de-numeros)])
+  ([numero (gen:gera-lista-de-numeros )])
    (displayln numero))
 
 (define (eval-for env x stop block)
@@ -101,12 +100,13 @@
 
 (define (eval-stmt env s)
   (match s
-    [(input string)
-        (read-value env string)]
+    ;[(input string)
+     ;   (read-value env string)]
 
     [(assign v e) (eval-assign env (var-id v) e)]
-
-    [(input-null v) (check-property teste)]
+    
+    ; se houver o comando input, gera os valores aleatoriamente.
+    [(input-null v) (check-property (make-config #:tests 5) teste)]
     
     [(eif e1 blk1 blk2)
      (let ([c (eval-expr env e1)])

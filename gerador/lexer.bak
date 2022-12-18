@@ -19,7 +19,6 @@
    NOT
    AND
    SEMI
-   COLON
    COMMA
    LPAREN
    RPAREN
@@ -73,8 +72,6 @@
    ["string" (token-STRING)]
    ["print" (token-PRINT)]
    ["input" (token-INPUT)]
-   ["quantidade-execucoes" (token-QTEXEC)]
-   [":" (token-COLON)]
    [(:: "//@" (:*(complement (:: any-string #\newline any-string))) #\newline)  (token-INPUT_COMMENT lexeme)]
    [(:: "//" (:~ "@") (:*(complement (:: any-string #\newline any-string))) #\newline) (return-without-pos (next-token input-port))]
    [(:: "/*" (complement (:: any-string "*/" any-string)) "*/") (return-without-pos (next-token input-port))]

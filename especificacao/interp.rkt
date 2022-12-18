@@ -1,44 +1,50 @@
 #lang racket
 
-(require "syntax.rkt")
+(require "syntax.rkt"
+         "../gerador/parser.rkt"
+         "../gerador/interp.rkt")
 
-(define (executa-arquivo path)
-  (load path))
-
-(define (percorre-path lista path)
-  (displayln (string-append path "/" (~a(first lista))))
+;a funcao executa arquivo recebe o caminho do arquivo e a quantidade de execuções
+(define (executa-arquivo path quantidade)
   (cond
-    [(empty? (rest lista)) (executa-arquivo (string-append path "/" (~a(first lista))))]
+    [(> quantidade 0)
+     
+  (display "Arquivo: ")
+  (displayln path)
+  (display "Execução numero: ")
+  (displayln quantidade)
+
+;chama o parser que gera a arvore de sintaxe do programa do aluno/professor e chama o interpretador da linguagem  
+   (let* ([port  (open-input-file path)]
+          [text  (string-replace (read-string 100 port) "#lang imp-gen/gerador/gen" "")])
+  (gen-interp (parse (open-input-string text))))
+; chama a função recursivamente até que a quantidade de execuções seja igual a 0
+  (executa-arquivo path (- quantidade 1))]))
+
+;função que percorre a pasta com os arquivos dos alunos.
+(define (percorre-path lista path quantidade)
+  (cond
+    [(empty? (rest lista)) (executa-arquivo (string-append path "/" (~a(first lista))) quantidade)]
     [else 
-      (executa-arquivo (string-append path "/" (~a(first lista))))
-      (percorre-path (rest lista) path)]))
+      (executa-arquivo (string-append path "/" (~a(first lista))) quantidade)
+      (percorre-path (rest lista) path quantidade)]))
 
 (define (eval-expr env e)
   (match e
     [(value val) (cons env (value val))]))
 
+; a funcao eval faz o casamento de padrao do nó
+(define (eval-stmt env cfg)
+  (match cfg
+   [(config numero-execucoes gabarito exercicio-aluno)
+    ;o nó CONFIG possui: o numero de execucoes, o caminho do arquivo de gabarito e a pasta com os arquivos dos alunos
+    ;primeiro executa o arquivo de gabarito do professor com a função executa-arquivo
+        (executa-arquivo (value-value gabarito) (value-value numero-execucoes))
+    ;depois executa os arquivo da pasta dos alunos com a função percorre-path
+        (percorre-path (directory-list (value-value exercicio-aluno)) (value-value exercicio-aluno) (value-value numero-execucoes))]))
 
-(define (eval-stmt env s)
-  (match s
-    [(numero-execucoes quantidade)
-        (display "Numero de execuções: ")
-        (display (value-value quantidade))
-        (displayln "")]
-
-    [(gabarito path)
-        (executa-arquivo (value-value path))]
-
-     [(exercicios-alunos path)
-       (percorre-path (directory-list (value-value path)) (value-value path))]))
-
-
-(define (eval-stmts env blk)
-  (match blk
-    ['() env]
-    [(cons s blks) (let ([nenv (eval-stmt env s)])
-                       (eval-stmts nenv blks))]))
-
-(define (imp-spcf-interp prog)
-  (eval-stmts (make-immutable-hash) prog))
+;função principal do interpretador
+(define (imp-spcf-interp cfg)
+  (eval-stmt (make-immutable-hash) cfg))
 
 (provide imp-spcf-interp eval-expr)

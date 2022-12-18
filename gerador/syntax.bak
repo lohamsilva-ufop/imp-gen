@@ -6,8 +6,8 @@
   (name)
   #:transparent)
 
-(struct numero-execucoes
-  (quantidade)
+(struct qtde-testes
+  (value)
   #:transparent)
 
 (struct input

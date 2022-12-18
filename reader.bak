@@ -4,10 +4,10 @@
          "interp.rkt"
          "syntax.rkt")
 
-
 (provide (rename-out [imp-read read]
                      [imp-read-syntax read-syntax]))
 
+(provide #%module-begin #%top-interaction)
 
 (define (imp-read in)
   (syntax->datum

@@ -2,5 +2,5 @@
 
 (module reader racket
   (require "reader.rkt")
+  (require (planet dyoo/simply-scheme:2:2))
   (provide read read-syntax))
-

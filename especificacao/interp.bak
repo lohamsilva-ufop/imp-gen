@@ -1,39 +1,46 @@
 #lang racket
 
-(require "syntax.rkt")
+(require "syntax.rkt"
+         "../gerador/parser.rkt"
+         "../gerador/interp.rkt")
 
-(define (executa-arquivo path)
-  (load path)
-)
+(define (executa-arquivo path quantidade)
+   (let* ([port  (open-input-file path)]
+          [text  (string-replace (read-string 100 port) "#lang imp-gen/gerador/gen" "")])
+  (gen-interp (parse (open-input-string text)))))
+
+(define (percorre-path lista path quantidade)
+  (displayln (string-append path "/" (~a(first lista))))
+  (cond
+    [(empty? (rest lista)) (executa-arquivo (string-append path "/" (~a(first lista))) quantidade)]
+    [else 
+      (executa-arquivo (string-append path "/" (~a(first lista))) quantidade)
+      (percorre-path (rest lista) path quantidade)]))
 
 (define (eval-expr env e)
   (match e
     [(value val) (cons env (value val))]))
 
-
 (define (eval-stmt env s)
   (match s
-    [(numero-execucoes quantidade)
-        (display "Numero de execuções: ")
-        (display (value-value quantidade))
-        (displayln "")]
+    [(config numero-execucoes gabarito exercicio-aluno)
+        (executa-arquivo (value-value gabarito) (value-value numero-execucoes))
+        (percorre-path (directory-list (value-value exercicio-aluno)) (value-value exercicio-aluno) (value-value numero-execucoes))]))
 
-    [(gabarito path)
-        (executa-arquivo value-value)]
+(define (eval-stmts env cfg)
+  (match cfg
+   [(config numero-execucoes gabarito exercicio-aluno)
+        (executa-arquivo (value-value gabarito) (value-value numero-execucoes))
+        (percorre-path (directory-list (value-value exercicio-aluno)) (value-value exercicio-aluno) (value-value numero-execucoes))]))
 
-     [(exercicios-alunos path)
-        (display "Localização da pasta com os exercicios dos alunos: ")
-        (display (value-value path))
-        (displayln "")]))
-
-
-(define (eval-stmts env blk)
-  (match blk
-    ['() env]
-    [(cons s blks) (let ([nenv (eval-stmt env s)])
-                       (eval-stmts nenv blks))]))
-
-(define (imp-spcf-interp prog)
-  (eval-stmts (make-immutable-hash) prog))
+(define (imp-spcf-interp cfg)
+  (eval-stmts (make-immutable-hash) cfg))
 
 (provide imp-spcf-interp eval-expr)
+
+ ; (displayln "Numero de execuções: ")
+        ;(displayln (value-value numero-execucoes))
+        ;(display "Path Gabarito: ")
+       ; (display (value-value gabarito))
+       ; (display "Path alunos: ")
+        ;(display (value-value exercicio-aluno))

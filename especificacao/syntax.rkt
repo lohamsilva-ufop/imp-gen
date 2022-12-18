@@ -2,16 +2,8 @@
 
 ;; expression syntax
 
-(struct numero-execucoes
-  (quantidade)
-  #:transparent)
-
-(struct gabarito
-  (path)
-  #:transparent)
-
-(struct exercicios-alunos
-  (path)
+(struct config
+  (numero-execucoes gabarito exercicio-aluno)
   #:transparent)
 
 (struct value

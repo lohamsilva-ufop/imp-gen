@@ -12,8 +12,7 @@
    GABARITO
    EXERCICIOS
    SEMI
-   COMMA
-   QLINHA))
+   COMMA))
 
 (define next-token
   (lexer-src-pos
@@ -25,7 +24,6 @@
    ["gabarito"  (token-GABARITO)]
    ["dir-aluno-exercicios" (token-EXERCICIOS)]
    [";"  (token-SEMI)]
-   ["\n"  (token-QLINHA)]
    [(:seq #\" (complement (:seq any-string #\" any-string)) #\")
     (token-STRING (substring lexeme 1 (sub1 (string-length lexeme))))]
    [(:: alphabetic (:* (:+ alphabetic numeric)))
