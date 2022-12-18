@@ -1,5 +1,0 @@
-#lang racket
-
-(module reader racket
-  (require "especificacao.rkt")
-  (provide read read-syntax))

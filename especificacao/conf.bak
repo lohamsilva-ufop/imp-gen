@@ -1,7 +1,0 @@
-#lang racket
-
-(module reader racket
-  (require "reader.rkt")
-  (provide read read-syntax))
-
-(provide #%module-begin  #%top-interaction #%datum - #%app #%top)
