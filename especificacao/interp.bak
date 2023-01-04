@@ -19,6 +19,7 @@
       
         (let*([port  (open-input-file path)]
                [text  (string-replace (read-string 100 port) "#lang imp-gen/gerador/gen" "")])
+
                (begin
                (gen-interp (parse (open-input-string text)))
                 (executa-arquivo path (- quantidade 1)))))]))
@@ -42,9 +43,9 @@
    [(config numero-execucoes gabarito exercicio-aluno)
     ;o nó CONFIG possui: o numero de execucoes, o caminho do arquivo de gabarito e a pasta com os arquivos dos alunos
     ;primeiro executa o arquivo de gabarito do professor com a função executa-arquivo
-    (let* ([table1 (executa-arquivo (value-value gabarito) (value-value numero-execucoes))])
+    (let* ([table1 (executa-arquivo (value-value gabarito) (value-value numero-execucoes) table)])
     ;depois executa os arquivo da pasta dos alunos com a função percorre-path
-        (percorre-path (directory-list (value-value exercicio-aluno)) (value-value exercicio-aluno) (value-value numero-execucoes)))]))
+        (percorre-path (directory-list (value-value exercicio-aluno)) (value-value exercicio-aluno) (value-value numero-execucoes) table1))]))
 
 ;função principal do interpretador
 ;imp-spcf-interp: config table -> table

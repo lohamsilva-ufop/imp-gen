@@ -3,7 +3,7 @@
 (require "parser.rkt"
          "interp.rkt"
          "syntax.rkt"
-          "../especificacao/table.rkt")
+          "especificacao/table.rkt")
 
 (provide (rename-out [imp-spcf-read read]
                      [imp-spcf-read-syntax read-syntax]))
@@ -19,6 +19,4 @@
       ,(finish (imp-spcf-interp (parse port))))))
 
 (define (finish env)
-   (display "Tabela Resultante: ")
-   (display table)
   (displayln "Finished!"))

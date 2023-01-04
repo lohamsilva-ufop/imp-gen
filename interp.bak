@@ -1,22 +1,8 @@
 #lang racket
-(require rackcheck rackunit)
- (require racket/format)
 
-;INTERPETADOR QUE CONTÉM O GERADOR
+(require "syntax.rkt" "especificacao/table.rkt")
 
-(require "syntax.rkt" "../especificacao/table.rkt")
-
-;função que gera numeros naturais aleatoriamente.
-(define (gen:gera-lista-de-numeros)
-           (gen:bind gen:natural 
-              (lambda (x) (gen:const x))))
-
-;propriedade: uma lista S deve obrigatoriamente conter numeros pares n.
-(define-property teste
-  ([numero (gen:gera-lista-de-numeros )])
-   (wread numero)
-   (wprint numero)
-   (displayln numero))
+;INTERPETADOR SEM O GERADOR
 
 (define (eval-for env x stop block)
 (let* (
@@ -35,10 +21,11 @@
 
 ;; reading a value
 
-(define (read-value env string gerador)
-  (begin
-     (display string)
-  ))
+(define (read-value env v)
+  (let ([x (read)])
+      (begin
+       (wread x)
+      (hash-set env (var-id v) (value x)))))
 
 ;; looking up an environment
 ;; lookup-env : environment * var -> environment * value
@@ -84,16 +71,10 @@
 
 ; eval-assign : environment * var * expr -> environment
 
-(define (eval-assign env v e)
-  (begin
 
-    (display "Tabela hash: ")
-    (display env)
-     (display "\n")
-    (display v)
-    (display "\n")
-    (display e)
-    )
+
+
+(define (eval-assign env v e)
   (let* ([res (eval-expr env e)])
     (hash-set env v (cdr res))))
 
@@ -102,14 +83,11 @@
 
 (define (eval-stmt env s)
   (match s
-    ;[(input string)
-     ;   (read-value env string)]
-
+    [(xinput (var v))
+     (begin
+        (display "Entre com um valor:")
+        (read-value env v))]
     [(assign v e) (eval-assign env (var-id v) e)]
-    
-    ; se houver o comando input, gera os valores aleatoriamente.
-    [(input-null v) (check-property (make-config #:tests 3) teste)]
-    
     [(eif e1 blk1 blk2)
      (let ([c (eval-expr env e1)])
        (if (true-value? (cdr c))
@@ -151,9 +129,13 @@
                       
            env)))]
 
+
+    
     [(sprint e1)
      (let ([v (eval-expr env e1)])
        (begin
+         (wprint (value-value(cdr v)))
+         (table)
          (displayln (value-value (cdr v)))
          env))]))
 
@@ -164,7 +146,10 @@
     [(cons s blks) (let ([nenv (eval-stmt env s)])
                        (eval-stmts nenv blks))]))
 
-(define (gen-interp prog)
+
+
+(define (imp-gen-interp prog)
   (eval-stmts (make-immutable-hash) prog))
 
-(provide gen-interp eval-expr)
+(provide imp-gen-interp eval-expr)
+

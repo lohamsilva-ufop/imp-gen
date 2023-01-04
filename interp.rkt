@@ -1,6 +1,6 @@
 #lang racket
 
-(require "syntax.rkt")
+(require "syntax.rkt" "especificacao/table.rkt")
 
 ;INTERPETADOR SEM O GERADOR
 
@@ -23,7 +23,9 @@
 
 (define (read-value env v)
   (let ([x (read)])
-      (hash-set env (var-id v) (value x))))
+      (begin
+       (wread x)
+      (hash-set env (var-id v) (value x)))))
 
 ;; looking up an environment
 ;; lookup-env : environment * var -> environment * value
@@ -69,9 +71,6 @@
 
 ; eval-assign : environment * var * expr -> environment
 
-
-
-
 (define (eval-assign env v e)
   (let* ([res (eval-expr env e)])
     (hash-set env v (cdr res))))
@@ -85,6 +84,8 @@
      (begin
         (display "Entre com um valor:")
         (read-value env v))]
+
+   
     [(assign v e) (eval-assign env (var-id v) e)]
     [(eif e1 blk1 blk2)
      (let ([c (eval-expr env e1)])
@@ -132,6 +133,7 @@
     [(sprint e1)
      (let ([v (eval-expr env e1)])
        (begin
+         (wprint (value-value(cdr v)))
          (displayln (value-value (cdr v)))
          env))]))
 

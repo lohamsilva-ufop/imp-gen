@@ -1,0 +1,17 @@
+#lang racket
+(struct entry (inputs outputs) #:transparent)
+
+(define table (list (entry null null)))
+
+(define (new-iteration)
+  (set! table (cons (entry null null) table)))
+
+(define (wread v)
+  (match (car table)
+    [(entry inp out) (set! table (cons (entry (cons v inp) out) (cdr table)))]))
+
+(define (wprint v)
+  (match (car table)
+    [(entry inp out) (set! table (cons (entry inp (cons v out)) (cdr table)))]))
+
+(provide table new-iteration wread wprint)

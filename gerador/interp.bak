@@ -108,7 +108,7 @@
     [(assign v e) (eval-assign env (var-id v) e)]
     
     ; se houver o comando input, gera os valores aleatoriamente.
-    [(input-null v) (check-property (make-config #:tests 3) teste)]
+    [(input-null v) (check-property (make-config #:tests 5) teste)]
     
     [(eif e1 blk1 blk2)
      (let ([c (eval-expr env e1)])
