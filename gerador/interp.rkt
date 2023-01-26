@@ -1,22 +1,11 @@
 #lang racket
 (require rackcheck rackunit)
  (require racket/format)
-
-;INTERPETADOR QUE CONTÉM O GERADOR
-
 (require "syntax.rkt" "../especificacao/table.rkt")
 
-;função que gera numeros naturais aleatoriamente.
-(define (gen:gera-lista-de-numeros)
-           (gen:bind gen:natural 
-              (lambda (x) (gen:const x))))
 
-;propriedade: uma lista S deve obrigatoriamente conter numeros pares n.
-(define-property teste
-  ([numero (gen:gera-lista-de-numeros )])
-   (wread numero)
-   (wprint numero)
-   (displayln numero))
+(define (gera-numeros)
+  (wread (sample gen:natural 5)))
 
 (define (eval-for env x stop block)
 (let* (
@@ -100,15 +89,15 @@
 ; eval-stmt : environment * statement -> environment
 
 
-(define (eval-stmt env s)
+(define (eval-stmt env s fread fwrite)
   (match s
-    ;[(input string)
-     ;   (read-value env string)]
+   ; [(input-null v) (fread env v)]
+        ;(read-value env string)]
 
     [(assign v e) (eval-assign env (var-id v) e)]
     
-    ; se houver o comando input, gera os valores aleatoriamente.
-    [(input-null v) (check-property (make-config #:tests 3) teste)]
+    [(input-null v) (gera-numeros)]
+    
     
     [(eif e1 blk1 blk2)
      (let ([c (eval-expr env e1)])
@@ -151,20 +140,18 @@
                       
            env)))]
 
-    [(sprint e1)
-     (let ([v (eval-expr env e1)])
-       (begin
-         (displayln (value-value (cdr v)))
-         env))]))
+    [(sprint e1) (wprint e1)]))
+    ; (let ([v (eval-expr env e1)])
+    ;  (fwrite env (cdr v)))]))
 
 
-(define (eval-stmts env blk)
+(define (eval-stmts env blk fread fwrite)
   (match blk
     ['() env]
-    [(cons s blks) (let ([nenv (eval-stmt env s)])
-                       (eval-stmts nenv blks))]))
+    [(cons s blks) (let ([nenv (eval-stmt env s fread fwrite)])
+                       (eval-stmts nenv blks fread fwrite))]))
 
-(define (gen-interp prog)
-  (eval-stmts (make-immutable-hash) prog))
+(define (gen-interp prog fread fwrite)
+  (eval-stmts (make-immutable-hash) prog fread fwrite))
 
 (provide gen-interp eval-expr)

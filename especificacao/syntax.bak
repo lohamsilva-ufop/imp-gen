@@ -12,6 +12,3 @@
 
 (provide (all-defined-out))
 
-;(struct config
-;  (numero-execucoes gabarito exercicio-aluno)
-;  #:transparent)

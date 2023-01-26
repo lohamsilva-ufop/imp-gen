@@ -18,8 +18,9 @@
   (datum->syntax
    #f
    `(module imp-mod racket
-      ,(finish (imp-gen-interp (parse port)))
-      (display table))))
+      ,(finish (imp-gen-interp (parse port) fread fwite)))))
 
 (define (finish env)
+  (display "Tabela Resultante: ")
+   (display table)
   (displayln "Finished!"))

@@ -18,7 +18,8 @@
   (datum->syntax
    #f
    `(module imp-mod racket
-      ,(finish (imp-gen-interp (parse port))))))
+      ,(finish (imp-gen-interp (parse port) wread wprint)))))
+;trocar o wread e wprint por fprint e fread
 
 (define (finish env)
   (display "Tabela Resultante: ")

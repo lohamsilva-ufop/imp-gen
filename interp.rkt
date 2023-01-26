@@ -127,8 +127,6 @@
                       (eval-for env4 x stop block))
                       
            env)))]
-
-
     
     [(sprint e1)
      (let ([v (eval-expr env e1)])
@@ -137,17 +135,14 @@
          (displayln (value-value (cdr v)))
          env))]))
 
-
 (define (eval-stmts env blk)
   (match blk
     ['() env]
     [(cons s blks) (let ([nenv (eval-stmt env s)])
                        (eval-stmts nenv blks))]))
 
-
-
-(define (imp-gen-interp prog)
-  (eval-stmts (make-immutable-hash) prog))
+(define (imp-gen-interp prog fread fwite)
+  (eval-stmts (make-immutable-hash) prog fread fwite))
 
 (provide imp-gen-interp eval-expr)
 

@@ -10,18 +10,17 @@
   (cond
     [(> quantidade 0)
       (begin
-        (display "Arquivo: ")
-        (displayln path)
-        (display "Execução numero: ")
-        (displayln quantidade)
+      ;  (display "Arquivo: ")
+       ; (displayln path)
+       ; (display "Execução numero: ")
+       ; (displayln quantidade)
 
 ;chama o parser que gera a arvore de sintaxe do programa do aluno/professor e chama o interpretador da linguagem
       
         (let*([port  (open-input-file path)]
-               [text  (string-replace (read-string 100 port) "#lang imp-gen/gerador/gen" "")])
-
+               [text  (string-replace (read-string 1000 port) "#lang imp-gen/gerador/gen" "")])
                (begin
-               (gen-interp (parse (open-input-string text)))
+               (gen-interp (parse (open-input-string text)) fread fwrite)
                 (executa-arquivo path (- quantidade 1)))))]))
   
 
@@ -40,12 +39,8 @@
 ; eval-stmt env cnf table -> table
 (define (eval-stmt env cfg)
   (match cfg
-   [(config numero-execucoes gabarito exercicio-aluno)
-    ;o nó CONFIG possui: o numero de execucoes, o caminho do arquivo de gabarito e a pasta com os arquivos dos alunos
-    ;primeiro executa o arquivo de gabarito do professor com a função executa-arquivo
-    (let* ([table1 (executa-arquivo (value-value gabarito) (value-value numero-execucoes) table)])
-    ;depois executa os arquivo da pasta dos alunos com a função percorre-path
-        (percorre-path (directory-list (value-value exercicio-aluno)) (value-value exercicio-aluno) (value-value numero-execucoes) table1))]))
+   [(config numero-execucoes gabarito)
+    (executa-arquivo (value-value gabarito) (value-value numero-execucoes))]))
 
 ;função principal do interpretador
 ;imp-spcf-interp: config table -> table
@@ -53,3 +48,18 @@
   (eval-stmt (make-immutable-hash) cfg))
 
 (provide imp-spcf-interp eval-expr)
+
+
+
+
+
+; eval-stmt env cnf table -> table
+;(define (eval-stmt env cfg)
+;  (match cfg
+;   [(config numero-execucoes gabarito exercicio-aluno)
+    ;o nó CONFIG possui: o numero de execucoes, o caminho do arquivo de gabarito e a pasta com os arquivos dos alunos
+    ;primeiro executa o arquivo de gabarito do professor com a função executa-arquivo
+;    (let* ([table1 (executa-arquivo (value-value gabarito) (value-value numero-execucoes))])
+    ;depois executa os arquivo da pasta dos alunos com a função percorre-path
+     ;   (percorre-path (directory-list (value-value exercicio-aluno)) (value-value exercicio-aluno) (value-value numero-execucoes)))]))
+

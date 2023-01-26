@@ -21,4 +21,5 @@
 (define (finish env)
    (display "Tabela Resultante: ")
    (display table)
-  (displayln "Finished!"))
+ ; (displayln "Finished!")
+  )
