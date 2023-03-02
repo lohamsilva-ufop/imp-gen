@@ -2,3 +2,4 @@
 
 quantidade-execucoes: 1;
 gabarito: "C:/Users/Loham Santos da Silv/Documents/GitHub/imp-gen/gabarito/new-gab.rkt";
+dir-aluno-exercicios: "C:/Users/Loham Santos da Silv/Documents/GitHub/imp-gen/exercicios-alunos/ex1.rkt";

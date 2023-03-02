@@ -3,7 +3,7 @@
 ;; expression syntax
 
 (struct config
-  (numero-execucoes gabarito)
+  (numero-execucoes gabarito dir-exercicios)
   #:transparent)
 
 (struct value

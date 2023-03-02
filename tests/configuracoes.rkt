@@ -1,6 +1,6 @@
 #lang imp-gen/especificacao/conf
 
-quantidade-execucoes: 3;
+quantidade-execucoes: 2;
 gabarito: "C:/Users/Loham Santos da Silv/Documents/GitHub/imp-gen/gabarito/gab.rkt";
-dir-aluno-exercicios: "C:/Users/Loham Santos da Silv/Documents/GitHub/imp-gen/exercicios-alunos";
+dir-aluno-exercicios: "C:/Users/Loham Santos da Silv/Documents/GitHub/imp-gen/exercicios-alunos/ex1.rkt";
 

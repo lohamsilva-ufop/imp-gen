@@ -1,35 +1,42 @@
 #lang racket
 
-(require "syntax.rkt" "table.rkt"
+(require "syntax.rkt" "table.rkt" "student-results.rkt"
          "../gerador/parser.rkt"
          "../gerador/interp.rkt")
 
 
-(define (executa-arquivo path quantidade)
-  ;definir depois o caso base (else)
+(define (executa-gabarito path quantidade)
   (cond
     [(> quantidade 0)
       (begin
-      ;  (display "Arquivo: ")
-       ; (displayln path)
-       ; (display "Execução numero: ")
-       ; (displayln quantidade)
-
-;chama o parser que gera a arvore de sintaxe do programa do aluno/professor e chama o interpretador da linguagem
-      
         (let*([port  (open-input-file path)]
                [text  (string-replace (read-string 1000 port) "#lang imp-gen/gerador/gen" "")])
                (begin
-               (gen-interp (parse (open-input-string text)) wread wprint)
-                (executa-arquivo path (- quantidade 1)))))]))
+               (gen-interp (parse (open-input-string text)) trace-fread trace-fprint)
+               (consolidate-last-entry)
+                (new-iteration)
+                (executa-gabarito path (- quantidade 1)))))]))
+
+(define (executa-aluno path quantidade)
+  (cond
+    [(> quantidade 0)
+      (begin
+        (let*([port  (open-input-file path)]
+               [text  (string-replace (read-string 1000 port) "#lang imp-gen/gerador/gen" "")])
+               (begin
+               (gen-interp (parse (open-input-string text)) replay-fread student-trace-fprint)
+               (new-result-instance)
+               (consolidate-result)
+               (next-line)
+               (executa-aluno path (- quantidade 1)))))]))
   
 
 ;função que percorre a pasta com os arquivos dos alunos.
 (define (percorre-path lista path quantidade)
   (cond
-    [(empty? (rest lista)) (executa-arquivo (string-append path "/" (~a(first lista))) quantidade)]
+    [(empty? (rest lista)) (executa-gabarito (string-append path "/" (~a(first lista))) quantidade)]
     [else 
-      (executa-arquivo (string-append path "/" (~a(first lista))) quantidade)
+      (executa-gabarito (string-append path "/" (~a(first lista))) quantidade)
       (percorre-path (rest lista) path quantidade)]))
 
 (define (eval-expr env e)
@@ -39,8 +46,14 @@
 ; eval-stmt env cnf table -> table
 (define (eval-stmt env cfg)
   (match cfg
-   [(config numero-execucoes gabarito)
-    (executa-arquivo (value-value gabarito) (value-value numero-execucoes))]))
+   [(config numero-execucoes gabarito dir-aluno-exercicios)
+    (begin
+      ;passar função de read e write para gabarito/aluno
+      (executa-gabarito (value-value dir-aluno-exercicios) (value-value numero-execucoes))
+      (drop-entry)
+      (start-replay-mode)
+      (executa-aluno (value-value gabarito) (value-value numero-execucoes))
+      (consolidate-lines))]))
 
 ;função principal do interpretador
 ;imp-spcf-interp: config table -> table

@@ -1,11 +1,8 @@
 #lang racket
 (require rackcheck rackunit)
  (require racket/format)
-(require "syntax.rkt" "../especificacao/table.rkt")
+(require "syntax.rkt" "../especificacao/table.rkt" "../especificacao/student-results.rkt")
 
-
-(define (gera-numeros)
-  (wread (sample gen:natural 5)))
 
 (define (eval-for env x stop block)
 (let* (
@@ -96,7 +93,7 @@
 
     [(assign v e) (eval-assign env (var-id v) e)]
     
-    [(input-null v) (gera-numeros)]
+    [(input-null v) (fread env v)]
     
     
     [(eif e1 blk1 blk2)
@@ -140,9 +137,9 @@
                       
            env)))]
 
-    [(sprint e1) (wprint e1)]))
-    ; (let ([v (eval-expr env e1)])
-    ;  (fwrite env (cdr v)))]))
+    [(sprint e1) 
+     (let ([v (eval-expr env e1)])
+      (fwrite env (cdr v)))]))
 
 
 (define (eval-stmts env blk fread fwrite)
@@ -154,4 +151,42 @@
 (define (gen-interp prog fread fwrite)
   (eval-stmts (make-immutable-hash) prog fread fwrite))
 
-(provide gen-interp eval-expr)
+(define (default-fread env v)
+  (let ([x (read)])
+      (hash-set env (var-id v) (value x))))
+
+;//utilizar a função  
+(define (trace-fread env v)
+  (let ([x (random 100)])
+    (begin
+      (wread x)
+      (hash-set env (var-id v) (value x)))))
+
+(define (replay-fread env v)
+      (let ([w (replay-read)])
+         (begin
+          (hash-set env (var-id v) (value w)))))
+
+(define (default-fprint env v)
+  (begin
+     (displayln (value-value v))
+     env))
+
+(define (trace-fprint env v)
+  (begin
+    (wprint (value-value v))
+    env))
+
+(define (student-trace-fprint env v)
+  (begin
+    (result-write (value-value v))
+    env))
+  
+(provide gen-interp
+         eval-expr
+         replay-fread
+         default-fread
+         trace-fprint
+         default-fprint
+         trace-fread
+         student-trace-fprint)

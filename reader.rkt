@@ -2,8 +2,7 @@
 
 (require "parser.rkt"
          "interp.rkt"
-         "syntax.rkt"
-         "especificacao/table.rkt")
+         "syntax.rkt")
 
 
 (provide (rename-out [imp-read read]
@@ -18,10 +17,9 @@
   (datum->syntax
    #f
    `(module imp-mod racket
-      ,(finish (imp-gen-interp (parse port) wread wprint)))))
-;trocar o wread e wprint por fprint e fread
+      ,(finish (imp-gen-interp (parse port) default-fread default-fprint)))))
 
 (define (finish env)
-  (display "Tabela Resultante: ")
-   (display table)
+ ; (display "Tabela Resultante: ")
+  ; (display table)
   (displayln "Finished!"))

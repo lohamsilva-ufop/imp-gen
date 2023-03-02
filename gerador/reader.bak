@@ -16,7 +16,7 @@
   (datum->syntax
    #f
    `(module imp-mod racket
-      ,(finish (gen-interp (parse port) default-fread default-fprint)))))
+      ,(finish (gen-interp (parse port) fread fprint)))))
 
 
 (define (finish env)

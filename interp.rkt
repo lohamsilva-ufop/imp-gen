@@ -131,7 +131,7 @@
     [(sprint e1)
      (let ([v (eval-expr env e1)])
        (begin
-         (wprint (value-value(cdr v)))
+         ;(wprint (value-value(cdr v)))
          (displayln (value-value (cdr v)))
          env))]))
 
@@ -144,5 +144,15 @@
 (define (imp-gen-interp prog fread fwite)
   (eval-stmts (make-immutable-hash) prog fread fwite))
 
-(provide imp-gen-interp eval-expr)
+(define (gen-interp prog fread fwrite)
+  (eval-stmts (make-immutable-hash) prog fread fwrite))
+
+(define (default-fread env v)
+  (let ([x (read)])
+      (hash-set env (var-id v) (value x))))
+
+(define (default-fprint env v)
+     (displayln (value-value v)))
+
+(provide imp-gen-interp eval-expr default-fread default-fprint)
 

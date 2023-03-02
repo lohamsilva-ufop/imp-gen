@@ -26,7 +26,8 @@
   
     (statement
      [(QTEXEC COLON expr SEMI
-       GABARITO COLON expr SEMI) (config $3 $7)])
+       GABARITO COLON expr SEMI
+       EXERCICIOS COLON expr SEMI) (config $3 $7 $11)])
 
   ;  [(QTEXEC COLON expr SEMI
   ;    GABARITO COLON expr SEMI

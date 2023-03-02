@@ -2,6 +2,7 @@
 
 
 input numero1;
-print numero1;
+
 input numero2;
-print numero2;
+
+print numero1 + numero2;
