@@ -100,6 +100,7 @@
          replay-read
          replay-write
          can-replay-read?
+         can-replay-write?
          can-advance-line?
          consolidate-last-entry)
 

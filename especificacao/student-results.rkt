@@ -1,4 +1,5 @@
 #lang racket
+(require "table.rkt")
 (struct result-roll (line data) #:transparent)
 (define result-table (result-roll 0 (list null)))
 
@@ -19,5 +20,35 @@
 (define (consolidate-lines)
   (match result-table
     [(result-roll line data) (set! result-table (result-roll line (reverse data)))]))
+
+(define (next-line-result)
+  (set! result-table (result-roll (+ 1 (result-roll-line result-table))(result-roll-data result-table))))
+
+(define (start-table-result)
+  (set! result-table (result-roll 0 (result-roll-data result-table))))
+
+(define (can-advance-result?)
+  (let*
+        ([line (result-roll-line result-table)])
+   (<= line (- (length (result-roll-data result-table)) 1))))
+
+(define (correct-exercise)
+  (cond
+    [(can-advance-result?)(begin
+                             (equal? (replay-write) (show-data-result))
+                             ;o valor que retorno compõe os valores da tabela.
+                             ;posteriormente: funcao de comparação para marcar onde errou.
+                             ;exceções
+                             (next-line-result)
+                             (correct-exercise))]))
+
+(define (show-data-result)
+    (let*
+        ([line (result-roll-line result-table)]
+         [data (list-ref (result-roll-data result-table) line)])data))
+
+(define (drop-entry-result)
+   (match result-table
+    [(result-roll l xs) (set! result-table (result-roll l (cdr xs)))]))
 
 (provide (all-defined-out))

@@ -53,7 +53,12 @@
       (drop-entry)
       (start-replay-mode)
       (executa-aluno (value-value gabarito) (value-value numero-execucoes))
-      (consolidate-lines))]))
+      (drop-entry-result)
+      (consolidate-lines)
+      (start-replay-mode)
+      (start-table-result)
+      (display result-table)
+      (correct-exercise))]))
 
 ;função principal do interpretador
 ;imp-spcf-interp: config table -> table

@@ -37,7 +37,7 @@
   (set! table (roll (roll-line table) (roll-col table) (+ 1 (roll-wcol table)) (roll-data table))))
 
 (define (next-line)
-  (set! table (roll (+ 1 (roll-line table)) (roll-col table) (roll-wcol table) (roll-data table))))
+  (set! table (roll (+ 1 (roll-line table)) 0 0 (roll-data table))))
 
 (define (replay-read)
   (let*
@@ -45,8 +45,11 @@
        [col (roll-col table)]
        [data-line (list-ref (roll-data table) line)])
 
-    (begin
-      (list-ref (entry-inputs data-line) col))))
+   
+      (cond [(can-replay-read?) (begin
+                                  (next-col-read)
+                                  (list-ref (entry-inputs data-line) col))]
+            [else 'replay-read-failure])))
 
 (define (replay-write)
   (let*
@@ -81,12 +84,14 @@
 
    (<= col (- (length (entry-outputs data-line)) 1) )))
 
-
-
+(define (drop-entry)
+   (match table
+    [(roll l c w xs) (set! table (roll l c w (cdr xs)))]))
 
 (provide table
          new-iteration
          wread
+         drop-entry
          wprint
          start-replay-mode
          next-col-read
