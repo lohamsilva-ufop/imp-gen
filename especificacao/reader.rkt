@@ -20,10 +20,10 @@
       ,(finish (imp-spcf-interp (parse port))))))
 
 (define (finish env)
-   (displayln "Tabela Resultante do gabarito: ")
-   (displayln table)
+  ; (displayln "Tabela Resultante do gabarito: ")
+  ; (displayln table)
   
-  (displayln "Tabela Resultante do aluno: ")
-   (displayln result-table)
- ; (displayln "Finished!")
+  ;(displayln "Tabela Resultante do aluno: ")
+   ;(displayln result-table)
+  (displayln "Finished!")
   )

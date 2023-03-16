@@ -46,7 +46,7 @@
               (start-replay-mode)
               (executa-aluno gabarito)
               (drop-entry-result)
-              (consolidate-result)
+              (consolidate-lines)
               (start-replay-mode)
               (start-table-result)
               (correct-exercise)

@@ -1,4 +1,5 @@
 #lang racket
+(require text-table)
 (require "table.rkt")
 (struct result-roll (line data) #:transparent)
 (define result-table (result-roll 0 (list null)))
@@ -32,10 +33,33 @@
         ([line (result-roll-line result-table)])
    (<= line (- (length (result-roll-data result-table)) 1))))
 
+(define (check-message)
+  (if (equal? (replay-write-list) (show-data-result))
+      
+      (begin
+
+      ;  (print-table
+      ; '((Entrada/Saída_Gabarito Saída_Aluno Correção)
+      ;  ((display table) (display (show-data-result)) "O exercicio está correto")))
+        
+        (display "Entrada/Saída do gabarito: ")
+        (displayln table)
+        (display "Saída do aluno: ")
+        (displayln (show-data-result))
+        (displayln "O exercicio está correto!")
+        (displayln ""))
+
+       (print-table
+       '((Entrada/Saída_Gabarito Saída_Aluno Correção)
+        (,(table) ,(show-data-result) "O exercicio está incorreto")))))
+
+        
+
+
 (define (correct-exercise)
   (cond
     [(can-advance-result?)(begin
-                             (equal? (replay-write) (show-data-result))
+                             (check-message)
                              ;o valor que retorno compõe os valores da tabela.
                              ;posteriormente: funcao de comparação para marcar onde errou.
                              ;exceções
@@ -50,5 +74,9 @@
 (define (drop-entry-result)
    (match result-table
     [(result-roll l xs) (set! result-table (result-roll l (cdr xs)))]))
+
+(define (drop-student-result)
+   (match result-table
+    [(result-roll l xs) (set! result-table (result-roll 0 (list null)))]))
 
 (provide (all-defined-out))

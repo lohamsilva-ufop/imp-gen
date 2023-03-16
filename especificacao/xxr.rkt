@@ -5,16 +5,21 @@
          "../gerador/interp.rkt")
 
 
-(define (executa-gabarito path)
+(define (executa-gabarito path quantidade)
+  (cond
+    [(> quantidade 0)
       (begin
         (let*([port  (open-input-file path)]
                [text  (string-replace (read-string 1000 port) "#lang imp-gen/gerador/gen" "")])
                (begin
                (gen-interp (parse (open-input-string text)) trace-fread trace-fprint)
                (consolidate-last-entry)
-                (new-iteration)))))
+                (new-iteration)
+                (executa-gabarito path (- quantidade 1)))))]))
 
-(define (executa-aluno path)
+(define (executa-aluno path quantidade)
+  (cond
+    [(> quantidade 0)
       (begin
         (let*([port  (open-input-file path)]
                [text  (string-replace (read-string 1000 port) "#lang imp-gen/gerador/gen" "")])
@@ -22,43 +27,38 @@
                (gen-interp (parse (open-input-string text)) replay-fread student-trace-fprint)
                (new-result-instance)
                (consolidate-result)
-               (next-line)))))
- 
+               (next-line)
+               (executa-aluno path (- quantidade 1)))))]))
+  
+
 ;função que percorre a pasta com os arquivos dos alunos.
 (define (percorre-path lista path quantidade)
   (cond
     [(empty? (rest lista)) (executa-gabarito (string-append path "/" (~a(first lista))) quantidade)]
     [else 
-      (executa-gabarito (string-append path "/" (~a(first lista))))
-      (percorre-path (rest lista) path)]))
+      (executa-gabarito (string-append path "/" (~a(first lista))) quantidade)
+      (percorre-path (rest lista) path quantidade)]))
 
 (define (eval-expr env e)
   (match e
     [(value val) (cons env (value val))]))
 
-
-(define (control-execute-programs numero-execucoes gabarito dir-aluno-exercicios)
-   (cond
-        [(> numero-execucoes 0)
-           (begin
-              (executa-gabarito dir-aluno-exercicios)
-              (drop-entry)
-              (start-replay-mode)
-              (executa-aluno gabarito)
-              (drop-entry-result)
-              (consolidate-result)
-              (start-replay-mode)
-              (start-table-result)
-              (correct-exercise)
-              (drop-table)
-              (drop-student-result))])
-              (control-execute-programs (- numero-execucoes 1) gabarito dir-aluno-exercicios))
-
 ; eval-stmt env cnf table -> table
 (define (eval-stmt env cfg)
   (match cfg
    [(config numero-execucoes gabarito dir-aluno-exercicios)
-       (control-execute-programs (value-value numero-execucoes) (value-value gabarito) (value-value dir-aluno-exercicios))]))
+    (begin
+      ;passar função de read e write para gabarito/aluno
+      (executa-gabarito (value-value dir-aluno-exercicios) (value-value numero-execucoes))
+      (drop-entry)
+      (start-replay-mode)
+      (executa-aluno (value-value gabarito) (value-value numero-execucoes))
+      (drop-entry-result)
+      (consolidate-lines)
+      (start-replay-mode)
+      (start-table-result)
+      ;(display result-table)
+      (correct-exercise))]))
 
 ;função principal do interpretador
 ;imp-spcf-interp: config table -> table

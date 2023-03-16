@@ -20,6 +20,4 @@
       ,(finish (imp-gen-interp (parse port) default-fread default-fprint)))))
 
 (define (finish env)
- ; (display "Tabela Resultante: ")
-  ; (display table)
   (displayln "Finished!"))
