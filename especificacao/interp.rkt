@@ -27,38 +27,78 @@
 ;função que percorre a pasta com os arquivos dos alunos.
 (define (percorre-path lista path quantidade)
   (cond
-    [(empty? (rest lista)) (executa-gabarito (string-append path "/" (~a(first lista))) quantidade)]
-    [else 
-      (executa-gabarito (string-append path "/" (~a(first lista))))
-      (percorre-path (rest lista) path)]))
+    [(empty? (rest lista))
+       (begin
+        (display "Arquivo: ")
+        (displayln (first lista))
+        (control-execute-ex quantidade (string-append path "/" (~a(first lista))))
+        (displayln "==========================================="))]
+    [else
+      (begin
+      (display "Arquivo: ")
+      (displayln (first lista))
+      (control-execute-ex quantidade (string-append path "/" (~a(first lista))))
+      ;(display result-table)
+      (start-table-result)
+      (drop-student-result)
+      (start-replay-mode)
+      (displayln "===========================================")
+      (percorre-path (rest lista) path quantidade))]))
 
 (define (eval-expr env e)
   (match e
     [(value val) (cons env (value val))]))
 
 
-(define (control-execute-programs numero-execucoes gabarito dir-aluno-exercicios)
+(define (control-execute-gab numero-execucoes gabarito)
    (cond
         [(> numero-execucoes 0)
            (begin
-              (executa-gabarito dir-aluno-exercicios)
+              (executa-gabarito gabarito)
               (drop-entry)
+              (new-iteration)
               (start-replay-mode)
-              (executa-aluno gabarito)
+              (control-execute-gab (- numero-execucoes 1) gabarito))]
+        
+         [else (drop-entry)]))
+
+
+(define (control-execute-ex numero-execucoes dir-aluno-exercicio)
+   (cond
+        [(> numero-execucoes 0)
+           (begin
+              (executa-aluno dir-aluno-exercicio)
               (drop-entry-result)
-              (consolidate-result)
-              (start-replay-mode)
+              (new-result-instance)
+             ; (consolidate-result)
+             ; (start-replay-mode)
               (start-table-result)
-              (correct-exercise)
-              (drop-table)
-              (drop-student-result))])
-              (control-execute-programs (- numero-execucoes 1) gabarito dir-aluno-exercicios))
+              ;(display result-table)
+             ; (correct-exercise)
+              ;(drop-student-result)
+              (control-execute-ex (- numero-execucoes 1) dir-aluno-exercicio))]
+
+         [else
+          (begin
+          (drop-entry-result)
+          (consolidate-lines)
+          (start-replay-mode)
+         ; (displayln table)
+          ;(displayln result-table)
+
+           (displayln "Entradas e Saídas do Gabarito: ")
+           (displayln table)
+           (displayln "")
+          
+          (correct-exercise))]))
 
 ; eval-stmt env cnf table -> table
 (define (eval-stmt env cfg)
   (match cfg
    [(config numero-execucoes gabarito dir-aluno-exercicios)
-       (control-execute-programs (value-value numero-execucoes) (value-value gabarito) (value-value dir-aluno-exercicios))]))
+       (begin
+       (control-execute-gab (value-value numero-execucoes) (value-value gabarito))
+       (percorre-path (directory-list (value-value dir-aluno-exercicios))(value-value dir-aluno-exercicios) (value-value numero-execucoes)))]))
 
 ;função principal do interpretador
 ;imp-spcf-interp: config table -> table
@@ -66,19 +106,3 @@
   (eval-stmt (make-immutable-hash) cfg))
 
 (provide imp-spcf-interp eval-expr)
-
-
-
-
-
-; eval-stmt env cnf table -> table
-;(define (eval-stmt env cfg)
-;  (match cfg
-;   [(config numero-execucoes gabarito exercicio-aluno)
-    ;o nó CONFIG possui: o numero de execucoes, o caminho do arquivo de gabarito e a pasta com os arquivos dos alunos
-    ;primeiro executa o arquivo de gabarito do professor com a função executa-arquivo
-;    (let* ([table1 (executa-arquivo (value-value gabarito) (value-value numero-execucoes))])
-    ;depois executa os arquivo da pasta dos alunos com a função percorre-path
-     ;   (percorre-path (directory-list (value-value exercicio-aluno)) (value-value exercicio-aluno) (value-value numero-execucoes)))]))
-
-

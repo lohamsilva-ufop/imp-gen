@@ -35,35 +35,45 @@
 
 (define (check-message)
   (if (equal? (replay-write-list) (show-data-result))
+     
       
       (begin
 
-      ;  (print-table
-      ; '((Entrada/Saída_Gabarito Saída_Aluno Correção)
-      ;  ((display table) (display (show-data-result)) "O exercicio está correto")))
+       ; (print-table
+       ;`((Entrada/Saída_Gabarito Saída_Aluno Correção)
+       ; (,(display table) ,(display (show-data-result)) "O exercicio está correto")))
         
-        (display "Entrada/Saída do gabarito: ")
-        (displayln table)
+        (display "Instância de entrada/saída do gabarito: ")
+        (display (replay-reader-list))
+        (display "/")
+        (displayln (replay-write-list))
         (display "Saída do aluno: ")
         (displayln (show-data-result))
         (displayln "O exercicio está correto!")
         (displayln ""))
 
-       (print-table
-       '((Entrada/Saída_Gabarito Saída_Aluno Correção)
-        (,(table) ,(show-data-result) "O exercicio está incorreto")))))
+      (begin
 
+       ; (print-table
+       ;`((Entrada/Saída_Gabarito Saída_Aluno Correção)
+       ; (,(display table) ,(display (show-data-result)) "O exercicio está correto")))
         
-
+       (display "Instância de entrada/saída do gabarito: ")
+        (display (replay-reader-list))
+        (display "/")
+        (displayln (replay-write-list))
+        (display "Saída do aluno: ")
+        (displayln (show-data-result))
+        (displayln "O exercicio está incorreto!")
+        (displayln ""))))
 
 (define (correct-exercise)
   (cond
     [(can-advance-result?)(begin
                              (check-message)
-                             ;o valor que retorno compõe os valores da tabela.
-                             ;posteriormente: funcao de comparação para marcar onde errou.
-                             ;exceções
                              (next-line-result)
+                             (next-line)
+                             (next-col-write)
                              (correct-exercise))]))
 
 (define (show-data-result)

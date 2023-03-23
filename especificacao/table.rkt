@@ -68,6 +68,15 @@
 
     (entry-outputs data-line)))
 
+(define (replay-reader-list)
+  (let*
+      ([line (roll-line table)]
+       [col (roll-wcol table)]
+       [data-line (list-ref (roll-data table) line)])
+
+    (entry-inputs data-line)))
+
+
 
 (define (can-replay-read?)
   (let*

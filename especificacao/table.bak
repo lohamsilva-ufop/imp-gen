@@ -60,6 +60,14 @@
     (begin
       (list-ref (entry-outputs data-line) col))))
 
+(define (replay-write-list)
+  (let*
+      ([line (roll-line table)]
+       [col (roll-wcol table)]
+       [data-line (list-ref (roll-data table) line)])
+
+    (entry-outputs data-line)))
+
 
 (define (can-replay-read?)
   (let*
@@ -88,20 +96,11 @@
    (match table
     [(roll l c w xs) (set! table (roll l c w (cdr xs)))]))
 
-(provide table
-         new-iteration
-         wread
-         drop-entry
-         wprint
-         start-replay-mode
-         next-col-read
-         next-col-write
-         next-line
-         replay-read
-         replay-write
-         can-replay-read?
-         can-advance-line?
-         consolidate-last-entry)
+(define (drop-table)
+   (match table
+    [(roll l c w xs) (set! table (roll 0 0 0 (list (entry null null))))]))
+
+(provide (all-defined-out))
 
 ;compare-print
    ;contador de colunas separados r-col e f-col (após replay)
