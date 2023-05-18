@@ -4,6 +4,4 @@ input numero1;
 
 input numero2;
 
-numero3 := numero1 + numero2;
-
-print numero3;
+print numero1 + numero2;
